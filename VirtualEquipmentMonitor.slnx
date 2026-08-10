@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="VirtualEquipmentMonitor.Application/VirtualEquipmentMonitor.Application.csproj" />
+    <Project Path="VirtualEquipmentMonitor.Contracts/VirtualEquipmentMonitor.Contracts.csproj" />
+    <Project Path="VirtualEquipmentMonitor.Desktop/VirtualEquipmentMonitor.Desktop.csproj" />
+    <Project Path="VirtualEquipmentMonitor.Domain.Tests/VirtualEquipmentMonitor.Domain.Tests.csproj" />
+    <Project Path="VirtualEquipmentMonitor.Domain/VirtualEquipmentMonitor.Domain.csproj" />
+    <Project Path="VirtualEquipmentMonitor.Infrastructure/VirtualEquipmentMonitor.Infrastructure.csproj" />
+    <Project Path="VirtualEquipmentMonitor.Simulator/VirtualEquipmentMonitor.Simulator.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+</Solution>
