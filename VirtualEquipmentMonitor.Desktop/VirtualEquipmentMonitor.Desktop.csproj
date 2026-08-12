@@ -8,4 +8,13 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VirtualEquipmentMonitor.Application\VirtualEquipmentMonitor.Application.csproj" />
+    <ProjectReference Include="..\VirtualEquipmentMonitor.Infrastructure\VirtualEquipmentMonitor.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
