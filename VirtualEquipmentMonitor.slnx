@@ -8,6 +8,7 @@
     <Project Path="VirtualEquipmentMonitor.Simulator/VirtualEquipmentMonitor.Simulator.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="VirtualEquipmentMonitor.Desktop.Tests/VirtualEquipmentMonitor.Desktop.Tests.csproj" Id="8e633ae4-5793-4810-af69-214987e22c1d" />
     <Project Path="VirtualEquipmentMonitor.Domain.Tests/VirtualEquipmentMonitor.Domain.Tests.csproj" />
     <Project Path="VirtualEquipmentMonitor.Infrastructure.Tests/VirtualEquipmentMonitor.Infrastructure.Tests.csproj" />
   </Folder>
