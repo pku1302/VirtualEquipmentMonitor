@@ -42,6 +42,10 @@ public partial class App : System.Windows.Application
                 new EquipmentSnapshotRepository(
                     contextFactory);
 
+            var historyService =
+                new EquipmentHistoryService(
+                    repository);
+
             var tcpClient =
                 new TcpEquipmentStatusClient();
 
@@ -52,7 +56,8 @@ public partial class App : System.Windows.Application
 
             _mainViewModel =
                 new MainWindowViewModel(
-                    persistingClient);
+                    persistingClient,
+                    historyService);
 
             var mainWindow = new MainWindow
             {

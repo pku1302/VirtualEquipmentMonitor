@@ -36,7 +36,9 @@ public sealed class MainWindowViewModelTests
             [snapshot]);
 
         var viewModel =
-            new MainWindowViewModel(client);
+            new MainWindowViewModel(
+                client,
+                new FakeEquipmentHistoryService());
 
         await viewModel.ConnectCommand.ExecuteAsync(null);
 
@@ -57,7 +59,9 @@ public sealed class MainWindowViewModelTests
             [snapshot]);
 
         var viewModel =
-            new MainWindowViewModel(client);
+            new MainWindowViewModel(
+                client,
+                new FakeEquipmentHistoryService());
 
         await viewModel.ConnectCommand.ExecuteAsync(null);
 
@@ -78,7 +82,9 @@ public sealed class MainWindowViewModelTests
             keepConnectionOpen: true);
 
         var viewModel = 
-            new MainWindowViewModel(client);
+            new MainWindowViewModel(
+                client,
+                new FakeEquipmentHistoryService());
 
         Task connectionTask =
             viewModel.ConnectCommand.ExecuteAsync(null);
@@ -110,7 +116,9 @@ public sealed class MainWindowViewModelTests
             exception: new SocketException());
 
         var viewModel =
-            new MainWindowViewModel(client);
+            new MainWindowViewModel(
+                client,
+                new FakeEquipmentHistoryService());
 
         await viewModel.ConnectCommand.ExecuteAsync(null);
 
@@ -124,6 +132,98 @@ public sealed class MainWindowViewModelTests
 
         Assert.False(viewModel.IsSessionActive);
     }
+
+    [Fact]
+    public async Task LoadHistoryCommand_LoadsRecentSnapshots()
+    {
+        DateTimeOffset baseTime =
+            new(
+                2026,
+                8,
+                16,
+                12,
+                0,
+                0,
+                TimeSpan.Zero);
+
+        var olderSnapshot = new EquipmentSnapshot(
+            "EQ-001",
+            baseTime,
+            EquipmentState.Running,
+            30,
+            1400,
+            1.0);
+
+        var newerSnapshot = new EquipmentSnapshot(
+            "EQ-001",
+            baseTime.AddSeconds(1),
+            EquipmentState.Warning,
+            80,
+            1600,
+            3.7);
+
+        var client =
+            new FakeEquipmentStatusClient();
+
+        var historyService =
+            new FakeEquipmentHistoryService(
+                [olderSnapshot, newerSnapshot]);
+
+        var viewModel =
+            new MainWindowViewModel(
+                client,
+                historyService);
+
+        await viewModel
+            .LoadHistoryCommand
+            .ExecuteAsync(null);
+
+        Assert.Equal(2, viewModel.HistoryItems.Count);
+
+        Assert.Equal(
+            newerSnapshot.Timestamp,
+            viewModel.HistoryItems[0].Timestamp);
+
+        Assert.Equal(
+            olderSnapshot.Timestamp,
+            viewModel.HistoryItems[1].Timestamp);
+
+        Assert.False(viewModel.IsHistoryLoading);
+    }
+
+    [Fact]
+    public async Task LoadHistoryCommand_WhenItemAlreadyExists_DoesNotDuplicateIt()
+    {
+        var snapshot = new EquipmentSnapshot(
+            "EQ-001",
+            DateTimeOffset.UtcNow,
+            EquipmentState.Running,
+            42.5,
+            1500,
+            1.25);
+
+        var client =
+            new FakeEquipmentStatusClient([snapshot]);
+
+        var historyService =
+            new FakeEquipmentHistoryService([snapshot]);
+
+        var viewModel =
+            new MainWindowViewModel(
+                client,
+                historyService);
+
+        await viewModel
+            .ConnectCommand
+            .ExecuteAsync(null);
+
+        await viewModel
+            .LoadHistoryCommand
+            .ExecuteAsync(null);
+
+        Assert.Single(viewModel.HistoryItems);
+    }
+
     private static EquipmentSnapshot CreateSnapshot()
     {
         return new EquipmentSnapshot(

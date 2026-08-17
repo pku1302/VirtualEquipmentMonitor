@@ -2,10 +2,10 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Virtual Equipment Monitor"
-        Width="720"
-        Height="520"
-        MinWidth="620"
-        MinHeight="450"
+        Width="920"
+        Height="720"
+        MinWidth="770"
+        MinHeight="600"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -29,6 +29,7 @@
     </Window.Resources>
     <Grid Margin="24">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -124,11 +125,87 @@
                 </StackPanel>
             </Border>
         </Grid>
+        <Grid Grid.Row="3"
+              Margin="6,18,6,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <DockPanel Grid.Row="0"
+                       Margin="0,0,0,8">
+                <TextBlock Text="최근 측정 이력"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center"/>
+                <StackPanel DockPanel.Dock="Right"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right">
+                    <TextBlock Text="조회 중..."
+                               Margin="0,0,12,0"
+                               VerticalAlignment="Center">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility"
+                                        Value="Collapsed"/>
 
-        <StackPanel Grid.Row="3"
+                                <Style.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding IsHistoryLoading}"
+                                        Value="True">
+                                        <Setter Property="Visibility"
+                                                Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <Button Content="이력 새로고침"
+                            Command="{Binding LoadHistoryCommand}"
+                            Width="110"
+                            Height="32"/>
+                </StackPanel>
+            </DockPanel>
+            <DataGrid Grid.Row="1"
+                      ItemsSource="{Binding HistoryItems}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserAddRows="False"
+                      SelectionMode="Single"
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="Horizontal"
+                      AlternatingRowBackground="#F5F7FA">
+                <DataGrid.Columns>
+                    <DataGridTextColumn
+                        Header="수신 시각"
+                        Binding="{Binding LocalTimestamp,
+                                  StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}"
+                        Width="180"/>
+                    <DataGridTextColumn
+                        Header="장비 ID"
+                        Binding="{Binding DeviceId}"
+                        Width="100"/>
+                    <DataGridTextColumn
+                        Header="상태"
+                        Binding="{Binding State}"
+                        Width="100"/>
+                    <DataGridTextColumn
+                        Header="온도 (°C)"
+                        Binding="{Binding Temperature,
+                                  StringFormat={}{0:F2}}"
+                        Width="*"/>
+                    <DataGridTextColumn
+                        Header="진동 (mm/s)"
+                        Binding="{Binding Vibration,
+                                  StringFormat={}{0:F2}}"
+                        Width="*"/>
+                </DataGrid.Columns> 
+            </DataGrid>
+        </Grid>
+
+        <StackPanel Grid.Row="4"
                     Margin="6,14,6,0">
             <TextBlock
-                Text="{Binding LastUpdatedAt,
+                Text="{Binding LocalLastUpdatedAt,
                        StringFormat='마지막 수신: {0:yyyy-MM-dd HH:mm:ss zzz}'}"
                 Foreground="#52606D"/>
 
