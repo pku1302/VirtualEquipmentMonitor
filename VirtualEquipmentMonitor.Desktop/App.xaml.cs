@@ -2,6 +2,7 @@
 using System.Windows;
 using VirtualEquipmentMonitor.Application.Services;
 using VirtualEquipmentMonitor.Desktop.ViewModels;
+using VirtualEquipmentMonitor.Domain.Alarms;
 using VirtualEquipmentMonitor.Infrastructure.Communication;
 using VirtualEquipmentMonitor.Infrastructure.Persistence;
 
@@ -38,13 +39,17 @@ public partial class App : System.Windows.Application
 
             await databaseInitailizer.InitializeAsync();
 
-            var repository =
+            var snapshotRepository =
                 new EquipmentSnapshotRepository(
+                    contextFactory);
+
+            var alarmRepository =
+                new EquipmentAlarmRepository(
                     contextFactory);
 
             var historyService =
                 new EquipmentHistoryService(
-                    repository);
+                    snapshotRepository);
 
             var tcpClient =
                 new TcpEquipmentStatusClient();
@@ -52,11 +57,21 @@ public partial class App : System.Windows.Application
             var persistingClient =
                 new PersistingEquipmentStatusClient(
                     tcpClient,
-                    repository);
+                    snapshotRepository);
+
+            var alarmEvaluator =
+                new EquipmentAlarmEvaluator(
+                    EquipmentThresholds.Default);
+
+            var alarmEvaluatingClient =
+                new AlarmEvaluatingEquipmentStatusClient(
+                    persistingClient,
+                    alarmEvaluator,
+                    alarmRepository);
 
             _mainViewModel =
                 new MainWindowViewModel(
-                    persistingClient,
+                    alarmEvaluatingClient,
                     historyService);
 
             var mainWindow = new MainWindow
